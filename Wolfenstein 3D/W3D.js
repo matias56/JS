@@ -13,7 +13,7 @@ window.onload = function(){
 
    
 
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('screen');
     const context = canvas.getContext('2d');
     const WIDTH = 300, HALF_WIDTH = 150;
     const HEIGHT = 200, HALF_HEIGHT = 100;
@@ -141,35 +141,54 @@ document.onkeyup = function (event) {
 
    
     
-    function drawEnemies()
+    function drawEnemies(enemies)
    {
-    console.log(enemies);
+       
+
+    
         for (let i = 0; i < enemies.length; i++) {
             const enemy = enemies[i];
 
-            const enemyX = enemy.x * MAP_SIZE + MAP_SIZE /2;
-            const enemyY = enemy.y * MAP_SIZE + MAP_SIZE / 2;
-            const enemyZ = playerZ;
-            
+            const relativeX = enemy.x - playerX;
+            const relativeY = enemy.y - playerY;
+            const relativeZ = enemy.z - playerZ;
 
-            console.log(`Enemy ${i} position: (${enemyX}, ${enemyY}), ${enemyZ}`);
-           
-            context.drawImage(SS, enemyX, enemyY, MAP_SIZE, MAP_SIZE);
+            const rotatedX = relativeX * Math.cos(playerAngle) - relativeY * Math.sin(playerAngle);
+            const rotatedY = relativeX * Math.sin(playerAngle) + relativeY * Math.cos(playerAngle);
+
+            const distance = Math.sqrt(rotatedX * rotatedX + rotatedY * rotatedY);
+            const correctedZ = relativeZ * Math.cos(playerAngle) - distance * Math.sin(playerAngle);
+
+            const scaleFactor = (HEIGHT / (correctedZ || 0.1)) * MAP_SIZE;
+            const screenX = (WIDTH / 2) + (rotatedX * scaleFactor / distance) - (scaleFactor / 2);
+            const screenY = HEIGHT - (screenHeight / 2) - (rotatedY * scaleFactor / distance) - (scaleFactor / 2);
+
+            context.drawImage(SS, screenX, screenY, scaleFactor, scaleFactor);
         }
+
+        
+      
            
     }
    
    
-    const enemies = [];
+    function createEnemies() {
+    
+        const enemies = [];
+      
+        for (let i = 0; i < 4; i++) {
+            const enemy = {
+                x: 84,
+                y: 84,
+                z: 0, 
+            };
 
-   
-    const enemy1 = { x: 10, y: 10 };
-    const enemy2 = { x: 20, y: 20 };
-    const enemy3 = { x: 30, y: 30 };
-    const enemy4 = { x: 40, y: 40 };
-
-   
-    enemies.push(enemy1, enemy2, enemy3, enemy4);
+            enemies.push(enemy);
+        }
+        
+        return enemies;
+        
+    }
  
 
     function gameLoop() {
@@ -196,8 +215,9 @@ document.onkeyup = function (event) {
         if (character.x && map[mapTargetX] == 0) playerX += playerOffsetX * character.x;
         if (character.y && map[mapTargetY] == 0) playerY += playerOffsetY * character.y;
         if (characterAngle) playerAngle += 0.03 * characterAngle;
+        drawEnemies();
 
-        console.log(playerX, playerY, playerAngle);
+        //console.log(playerX, playerY, playerAngle);
         var mapOffsetX = Math.floor(canvas.width / 2) - HALF_WIDTH;
         var mapOffsetY = Math.floor(canvas.height / 2) - HALF_HEIGHT;
        
@@ -304,7 +324,7 @@ document.onkeyup = function (event) {
     function draw()
     {
         gameLoop();
-        drawEnemies();
+        
 
     }
 
