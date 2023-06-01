@@ -101,7 +101,11 @@ document.onkeyup = function (event) {
     }
 } 
 
-
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 
     const DOUBLE_PI = 2 * Math.PI;
     const FOV = Math.PI / 3;
@@ -111,11 +115,18 @@ document.onkeyup = function (event) {
     const WALLS = [];
 
     const numEnemies = 4;
-    const enemyPositions = [];
+    const enemyPositions = [
+        { col: 1, row: 1 },
+        { col: 2, row: 3 },
+        { col:4, row: 2 },
+        { col: 3, row: 4 }
+    ];
 
-    const SS = [];
-    
-    
+    const SS = new Image();
+
+    SS.onload = function(){
+        drawEnemies();
+    };
 
     for (var filename = 0; filename < 14; filename++) {
         var image = document.createElement('img');
@@ -129,26 +140,28 @@ document.onkeyup = function (event) {
         enemyPositions.push({ row: randomRow, col: randomCol });
         var imageE = document.createElement('img');
         image.src = 'Assets/SS.png';
-        SS.push(imageE);
-       
+        
     }
     
    function drawEnemies()
    {
        for (const enemyPos of enemyPositions) {
            
-           const { row, col } = enemyPos;
-           const x = 0;
-           const y = 0;
-           const z = (col - WIDTH/2)* MAP_SIZE;
+          
+           const x = enemyPos.col * MAP_SIZE;
+           const y = enemyPos.row * MAP_SIZE;
+           
         
           
-           context.drawImage(SS[0], x, y - z, MAP_SIZE, MAP_SIZE);
+           context.drawImage(SS, x, y, MAP_SIZE, MAP_SIZE);
            
     }
    }
    
-  
+  if(SS.complete)
+  {
+    drawEnemies();
+  }
 
     function gameLoop() {
 
@@ -181,8 +194,8 @@ document.onkeyup = function (event) {
        
 
         context.drawImage(WALLS[0], canvas.width / 2 - HALF_WIDTH, canvas.height / 2 - HALF_HEIGHT);
+
        
-     
 
        
         
@@ -250,7 +263,7 @@ document.onkeyup = function (event) {
 
             context.drawImage(WALLS[textureImage], textureOffset, 0, 1, 64, mapOffsetX + ray, mapOffsetY + (HALF_HEIGHT - Math.floor(wallHeight / 2)), 1, wallHeight);
 
-           
+            drawEnemies();
 
             currentAngle -= STEP_ANGLE;
 
@@ -259,7 +272,7 @@ document.onkeyup = function (event) {
         }
 
         
-        drawEnemies();
+        
         
         context.fillStyle = 'White';
         context.fillRect(0, 0, canvas.width, mapOffsetY);
