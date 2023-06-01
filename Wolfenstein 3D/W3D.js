@@ -67,9 +67,9 @@ window.onload = function(){
         1, 1, 1, 1, 7, 1, 6, 1, 9, 1, 6, 1, 7, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1,
     ];
    
-
     var playerX = MAP_SCALE + 20;
     var playerY = MAP_SCALE + 20;
+    
     var playerAngle = Math.PI / 3;
     
 
@@ -79,7 +79,21 @@ const character={
 }
 var characterAngle = 0;
 
+let groundLevel = -10000;
 
+    const playerHeight = 2;
+
+for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+            const tile = map[y][x];
+        if (tile.y < groundLevel) {
+                groundLevel = tile.y;
+        }
+    }
+}
+
+    
+const playerZ = groundLevel + playerHeight;
 
 document.onkeydown = function (event) {
     switch (event.keyCode) {
@@ -114,14 +128,7 @@ document.onkeyup = function (event) {
 
     const WALLS = [];
 
-    const numEnemies = 4;
-    const enemyPositions = [
-        { col: 1, row: 1 },
-        { col: 2, row: 3 },
-        { col:4, row: 2 },
-        { col: 3, row: 4 }
-    ];
-
+   
     const SS = new Image();
     SS.src = 'Assets/SS.png';
   
@@ -132,23 +139,22 @@ document.onkeyup = function (event) {
         WALLS.push(image);
     }
 
-    for (var i = 0; i < numEnemies; i++) {
-        const randomRow = Math.floor(Math.random() * canvas.height);
-        const randomCol = Math.floor(Math.random() * canvas.height);
-        enemyPositions.push({ row: randomRow, col: randomCol });
-        var imageE = document.createElement('img');
-        imageE.src = 'Assets/SS.png';
-        
-    }
+   
     
-    function drawEnemies(enemies)
+    function drawEnemies()
    {
+    console.log(enemies);
         for (let i = 0; i < enemies.length; i++) {
             const enemy = enemies[i];
 
-          
-            context.fillStyle = 'Assets/SS.png'; 
-            context.fillRect(enemy.x, enemy.y, MAP_SIZE, MAP_SIZE);
+            const enemyX = enemy.x * MAP_SIZE + MAP_SIZE /2;
+            const enemyY = enemy.y * MAP_SIZE + MAP_SIZE / 2;
+            const enemyZ = playerZ;
+            
+
+            console.log(`Enemy ${i} position: (${enemyX}, ${enemyY}), ${enemyZ}`);
+           
+            context.drawImage(SS, enemyX, enemyY, MAP_SIZE, MAP_SIZE);
         }
            
     }
@@ -191,7 +197,7 @@ document.onkeyup = function (event) {
         if (character.y && map[mapTargetY] == 0) playerY += playerOffsetY * character.y;
         if (characterAngle) playerAngle += 0.03 * characterAngle;
 
-
+        console.log(playerX, playerY, playerAngle);
         var mapOffsetX = Math.floor(canvas.width / 2) - HALF_WIDTH;
         var mapOffsetY = Math.floor(canvas.height / 2) - HALF_HEIGHT;
        
@@ -290,14 +296,23 @@ document.onkeyup = function (event) {
         context.fillText('FPS: ' + fps_rate, 0, 20);
 
 
-        drawEnemies(enemies);
-  
+        
     } 
    
-    gameLoop();
+   
+
+    function draw()
+    {
+        gameLoop();
+        drawEnemies();
+
+    }
 
     
 
+    SS.onload = function () {
+        draw();
+    };
    
     
 };
