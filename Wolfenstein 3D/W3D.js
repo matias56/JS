@@ -123,10 +123,8 @@ document.onkeyup = function (event) {
     ];
 
     const SS = new Image();
-
-    SS.onload = function(){
-        drawEnemies();
-    };
+    SS.src = 'Assets/SS.png';
+  
 
     for (var filename = 0; filename < 14; filename++) {
         var image = document.createElement('img');
@@ -139,29 +137,34 @@ document.onkeyup = function (event) {
         const randomCol = Math.floor(Math.random() * canvas.height);
         enemyPositions.push({ row: randomRow, col: randomCol });
         var imageE = document.createElement('img');
-        image.src = 'Assets/SS.png';
+        imageE.src = 'Assets/SS.png';
         
     }
     
-   function drawEnemies()
+    function drawEnemies(enemies)
    {
-       for (const enemyPos of enemyPositions) {
-           
+        for (let i = 0; i < enemies.length; i++) {
+            const enemy = enemies[i];
+
           
-           const x = enemyPos.col * MAP_SIZE;
-           const y = enemyPos.row * MAP_SIZE;
-           
-        
-          
-           context.drawImage(SS, x, y, MAP_SIZE, MAP_SIZE);
+            context.fillStyle = 'Assets/SS.png'; 
+            context.fillRect(enemy.x, enemy.y, MAP_SIZE, MAP_SIZE);
+        }
            
     }
-   }
    
-  if(SS.complete)
-  {
-    drawEnemies();
-  }
+   
+    const enemies = [];
+
+   
+    const enemy1 = { x: 10, y: 10 };
+    const enemy2 = { x: 20, y: 20 };
+    const enemy3 = { x: 30, y: 30 };
+    const enemy4 = { x: 40, y: 40 };
+
+   
+    enemies.push(enemy1, enemy2, enemy3, enemy4);
+ 
 
     function gameLoop() {
 
@@ -263,16 +266,16 @@ document.onkeyup = function (event) {
 
             context.drawImage(WALLS[textureImage], textureOffset, 0, 1, 64, mapOffsetX + ray, mapOffsetY + (HALF_HEIGHT - Math.floor(wallHeight / 2)), 1, wallHeight);
 
-            drawEnemies();
 
             currentAngle -= STEP_ANGLE;
 
-          
+           
+       
             
         }
 
         
-        
+
         
         context.fillStyle = 'White';
         context.fillRect(0, 0, canvas.width, mapOffsetY);
@@ -286,13 +289,15 @@ document.onkeyup = function (event) {
         context.font = '10px Monospace';
         context.fillText('FPS: ' + fps_rate, 0, 20);
 
-        
+
+        drawEnemies(enemies);
   
     } 
    
     gameLoop();
 
-   
     
+
+   
     
 };
