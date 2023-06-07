@@ -1,3 +1,4 @@
+
 window.onload = function(){
  const square = document.createElement('div');
  square.style.width = '100px';
@@ -31,7 +32,7 @@ window.onload = function(){
     var modo = 0;	//Raycasting = 0     Mapa = 1
 
 
-
+    let spacePressed = false;
 
 
     //----------------------------------------------------------------------
@@ -54,6 +55,10 @@ window.onload = function(){
 
             case 37:
                 jugador.izquierda();
+                break;
+
+            case 32:
+                spacePressed=true;
                 break;
 
         }
@@ -81,6 +86,10 @@ window.onload = function(){
 
             case 37:
                 jugador.giraSuelta();
+                break;
+
+            case 32:
+                spacePressed = false;
                 break;
 
           
@@ -955,9 +964,9 @@ window.onload = function(){
         function gameLoop()
         {
 
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            const rayStartX = canvas.width / 2;
-            const rayStartY = canvas.height;
+            
+            const rayStartX = canvasAncho/2;
+            const rayStartY = canvasAlto;
 
             const rayDirectionX = 0;
             const rayDirectionY = -1;
@@ -968,12 +977,22 @@ window.onload = function(){
             ctx.beginPath();
             ctx.moveTo(rayStartX, rayStartY);
             ctx.lineTo(rayEndX, rayEndY);
-            ctx.strokeStyle = 'white';
+            ctx.strokeStyle = 'red';
             ctx.lineWidth = 1;
             ctx.stroke();
 
-          
+            if (imgArmor && rayEndX >= imgArmor.x && rayEndX <= imgArmor.x + imgArmor.width && rayEndY >= imgArmor.y && rayEndY <= imgArmor.y + imgArmor.height) {
+               
+                if (spacePressed) {
+                    imgArmor = null;
+                }
             }
+
+            requestAnimationFrame(gameLoop);
+            }
+
+       
+       
 
       
        
@@ -982,17 +1001,18 @@ window.onload = function(){
         jugador = new Player(ctx, escenario, 100, 100);
 
 
-
+        gameLoop();
         //CARGAMOS LOS SPRITES DESPUÉS DEL ESCENARIO Y EL JUGADOR
         inicializaSprites();
 
+       
 
         //EMPEZAMOS A EJECUTAR EL BUCLE PRINCIPAL
         setInterval(function () { principal(); }, 1000 / FPS);
 
         //AMPLIAMOS EL CANVAS CON CSS
         reescalaCanvas();
-        gameLoop();
+        
        
     }
 
