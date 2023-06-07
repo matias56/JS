@@ -1,4 +1,3 @@
-
 window.onload = function(){
  const square = document.createElement('div');
  square.style.width = '100px';
@@ -955,6 +954,21 @@ window.onload = function(){
         canvas.width = canvasAncho;
         canvas.height = canvasAlto;
 
+        const rayStartX = canvas.width / 2;
+        const rayStartY = canvas.height;
+
+        const rayDirectionX = 0;
+        const rayDirectionY = -1;
+
+        const rayEndX = rayStartX + rayDirectionX;
+        const rayEndY = rayStartY + rayDirectionY;
+
+        ctx.beginPath();
+        ctx.moveTo(rayStartX, rayStartY);
+        ctx.lineTo(rayEndX, rayEndY);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 1;
+        ctx.stroke();
 
         escenario = new Level(canvas, ctx, nivel1);
         jugador = new Player(ctx, escenario, 100, 100);
@@ -970,6 +984,8 @@ window.onload = function(){
 
         //AMPLIAMOS EL CANVAS CON CSS
         reescalaCanvas();
+
+       
     }
 
 
