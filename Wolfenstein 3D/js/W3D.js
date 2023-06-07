@@ -6,8 +6,8 @@ window.onload = function(){
  square.style.backgroundImage = "url('D:/Programming/JS/Wolfenstein 3D/Assets/Hand.png')";
  square.style.backgroundSize = 'cover';
  square.style.position = 'absolute';
- square.style.left = '49%';
- square.style.bottom = '160px';
+ square.style.left = '50%';
+ square.style.bottom = '161px';
  document.body.appendChild(square);
 
 
@@ -84,21 +84,14 @@ window.onload = function(){
                 jugador.giraSuelta();
                 break;
 
-            case 32:
-                cambiaModo();
-                break;
+          
         }
     });
 
 
 
 
-    function cambiaModo() {
-        if (modo == 0)
-            modo = 1;
-        else
-            modo = 0;
-    }
+  
 
 
 
@@ -555,17 +548,7 @@ window.onload = function(){
             }
 
 
-            if (modo == 1) {
-                //LÍNEA DIRECCIÓN
-                var xDestino = this.wallHitX;
-                var yDestino = this.wallHitY;
-
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.x, this.y);
-                this.ctx.lineTo(xDestino, yDestino);
-                this.ctx.strokeStyle = "red";
-                this.ctx.stroke();
-            }
+           
 
         }
 
@@ -733,7 +716,7 @@ window.onload = function(){
     //------------------------------------------------------------------------------------
     //MODIFICAMOS EL ESTILO CSS (por eso usamos canvas.style.width y no canvas.width)
     function reescalaCanvas() {
-        canvas.style.width = "800px";
+        canvas.style.width = "1900px";
         canvas.style.height = "800px";
     }
 
@@ -861,7 +844,7 @@ window.onload = function(){
                 var viewDist = 500;
 
 
-                console.log(distanciaPlanoProyeccion);
+            
 
 
                 var x0 = Math.tan(spriteAngle) * viewDist;
@@ -940,7 +923,7 @@ window.onload = function(){
 
         //CARGAMOS SPRITES
         imgArmor = new Image();
-        imgArmor.src = "img/armor.png";
+        imgArmor.src = "img/SS.png";
 
         imgPlanta = new Image();
         imgPlanta.src = "img/planta.png";
@@ -958,7 +941,7 @@ window.onload = function(){
     function inicializa() {
 
 
-        canvas = document.getElementById('canvas');
+        canvas = document.getElementById('screen');
         ctx = canvas.getContext('2d');
 
 
@@ -1027,4 +1010,5 @@ window.onload = function(){
 
 
     }
+    inicializa();
 }
