@@ -948,27 +948,35 @@ window.onload = function(){
         tiles = new Image();
         tiles.src = "img/walls.png";
 
-
-
         //MODIFICA EL TAMAÑO DEL CANVAS
         canvas.width = canvasAncho;
         canvas.height = canvasAlto;
 
-        const rayStartX = canvas.width / 2;
-        const rayStartY = canvas.height;
+        function gameLoop()
+        {
 
-        const rayDirectionX = 0;
-        const rayDirectionY = -1;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            const rayStartX = canvas.width / 2;
+            const rayStartY = canvas.height;
 
-        const rayEndX = rayStartX + rayDirectionX;
-        const rayEndY = rayStartY + rayDirectionY;
+            const rayDirectionX = 0;
+            const rayDirectionY = -1;
 
-        ctx.beginPath();
-        ctx.moveTo(rayStartX, rayStartY);
-        ctx.lineTo(rayEndX, rayEndY);
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+            const rayEndX = rayStartX + rayDirectionX;
+            const rayEndY = rayStartY + rayDirectionY;
+
+            ctx.beginPath();
+            ctx.moveTo(rayStartX, rayStartY);
+            ctx.lineTo(rayEndX, rayEndY);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+          
+            }
+
+      
+       
 
         escenario = new Level(canvas, ctx, nivel1);
         jugador = new Player(ctx, escenario, 100, 100);
@@ -984,7 +992,7 @@ window.onload = function(){
 
         //AMPLIAMOS EL CANVAS CON CSS
         reescalaCanvas();
-
+        gameLoop();
        
     }
 
