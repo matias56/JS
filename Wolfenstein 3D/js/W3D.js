@@ -6,7 +6,7 @@ window.onload = function(){
  square.style.backgroundImage = "url('D:/Programming/JS/Wolfenstein 3D/Assets/Hand.png')";
  square.style.backgroundSize = 'cover';
  square.style.position = 'absolute';
- square.style.left = '50%';
+ square.style.left = '47%';
  square.style.bottom = '161px';
  document.body.appendChild(square);
 
@@ -944,6 +944,7 @@ window.onload = function(){
 
     }
 
+    
 
     //============================================================================ 
     function inicializa() {
@@ -961,18 +962,23 @@ window.onload = function(){
         canvas.width = canvasAncho;
         canvas.height = canvasAlto;
 
+       
+
         function gameLoop()
         {
+           
+
+            const rayLength = 100;
 
             
-            const rayStartX = canvas.width/2;
-            const rayStartY = canvas.height;
+            const rayStartX = canvasAncho/2;
+            const rayStartY = canvasAlto;
 
-            const rayDirectionX = 0;
-            const rayDirectionY = -1;
 
-            const rayEndX = rayStartX + rayDirectionX;
-            const rayEndY = rayStartY + rayDirectionY;
+            const rayAngle = (jugador.anguloRotacion - FOV / 2) * (Math.PI / 180);
+
+            const rayEndX = jugador.x + Math.cos(rayAngle) * rayLength;
+            const rayEndY = jugador.y + Math.sin(rayAngle) * rayLength;
 
             ctx.beginPath();
             ctx.moveTo(rayStartX, rayStartY);
@@ -981,7 +987,7 @@ window.onload = function(){
             ctx.lineWidth = 1;
             ctx.stroke();
 
-            if (imgArmor && rayEndX >= imgArmor.x && rayEndX <= imgArmor.x + imgArmor.width && rayEndY >= imgArmor.y && rayEndY <= imgArmor.y + imgArmor.height) {
+            if (imgArmor && intersects(rayEndX, rayEndY, jugador.x, jugador.y, imgArmor.x, imgArmor.y, 32, 56)) {
                
                 console.log('it collides');
                 if (spacePressed) {
@@ -989,11 +995,23 @@ window.onload = function(){
                 }
             }
 
+            
+
             requestAnimationFrame(gameLoop);
             }
 
        
-       
+        function intersects(x1, y1, x2, y2, x3, y3, width, height) {
+            // Check if the ray intersects with the rectangle
+            return (
+                x1 >= x3 &&
+                x1 <= x3 + width &&
+                y1 >= y3 &&
+                y1 <= y3 + height &&
+                ((x2 >= x3 && x2 <= x3 + width) || (x1 >= x3 && x1 <= x3 + width)) &&
+                ((y2 >= y3 && y2 <= y3 + height) || (y1 >= y3 && y1 <= y3 + height))
+            );
+        }
 
       
        
@@ -1017,7 +1035,7 @@ window.onload = function(){
        
     }
 
-
+   
 
     function borraCanvas() {
         canvas.width = canvas.width;
