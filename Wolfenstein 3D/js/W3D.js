@@ -965,8 +965,8 @@ window.onload = function(){
         {
 
             
-            const rayStartX = canvasAncho/2;
-            const rayStartY = canvasAlto;
+            const rayStartX = canvas.width/2;
+            const rayStartY = canvas.height;
 
             const rayDirectionX = 0;
             const rayDirectionY = -1;
@@ -983,6 +983,7 @@ window.onload = function(){
 
             if (imgArmor && rayEndX >= imgArmor.x && rayEndX <= imgArmor.x + imgArmor.width && rayEndY >= imgArmor.y && rayEndY <= imgArmor.y + imgArmor.height) {
                
+                console.log('it collides');
                 if (spacePressed) {
                     imgArmor = null;
                 }
