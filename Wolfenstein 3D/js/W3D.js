@@ -1,17 +1,16 @@
+window.onload = function () {
+    const square = document.createElement('div');
+    square.style.width = '100px';
+    square.style.height = '100px';
+    square.style.backgroundImage = "url('D:/Programming/JS/Wolfenstein 3D/Assets/Hand.png')";
+    square.style.backgroundSize = 'cover';
+    square.style.position = 'absolute';
+    square.style.left = '47%';
+    square.style.bottom = '161px';
+    document.body.appendChild(square);
 
-window.onload = function(){
- const square = document.createElement('div');
- square.style.width = '100px';
- square.style.height = '100px';
- square.style.backgroundImage = "url('D:/Programming/JS/Wolfenstein 3D/Assets/Hand.png')";
- square.style.backgroundSize = 'cover';
- square.style.position = 'absolute';
- square.style.left = '47%';
- square.style.bottom = '161px';
- document.body.appendChild(square);
 
 
-   
 
     var canvas;
     var ctx;
@@ -58,7 +57,7 @@ window.onload = function(){
                 break;
 
             case 32:
-                spacePressed=true;
+                spacePressed = true;
                 break;
 
         }
@@ -92,14 +91,14 @@ window.onload = function(){
                 spacePressed = false;
                 break;
 
-          
+
         }
     });
 
 
 
 
-  
+
 
 
 
@@ -112,9 +111,9 @@ window.onload = function(){
         [1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-        [1, 0, 1, 2, 1, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 1, 0, 0, 3, 3, 1],
+        [1, 0, 3, 2, 3, 0, 0, 0, 0, 4],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 4],
+        [1, 0, 0, 0, 1, 0, 0, 3, 3, 4],
         [1, 0, 0, 1, 1, 0, 0, 1, 1, 1],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -556,7 +555,7 @@ window.onload = function(){
             }
 
 
-           
+
 
         }
 
@@ -731,7 +730,11 @@ window.onload = function(){
     //-------------------------------------------------------------------------------------
     var ray;
     var tiles;
-    var imgArmor;
+   
+    var SS = [];
+
+    var ene;
+    
     var imgPlanta;
 
     var sprites = [];	//array con los sprites
@@ -852,7 +855,7 @@ window.onload = function(){
                 var viewDist = 500;
 
 
-            
+
 
 
                 var x0 = Math.tan(spriteAngle) * viewDist;
@@ -920,9 +923,8 @@ window.onload = function(){
 
 
         //DIBUJAMOS LOS SPRITES UNO POR UNO
-        for (a = 0; a < sprites.length; a++) {
-            sprites[a].dibuja();
-        }
+    
+      
 
     }
 
@@ -930,21 +932,21 @@ window.onload = function(){
     function inicializaSprites() {
 
         //CARGAMOS SPRITES
-        imgArmor = new Image();
-        imgArmor.src = "img/SS.png";
+        ene = new Image(),
+        ene.src = "img/SS.png"
+        
 
         imgPlanta = new Image();
         imgPlanta.src = "img/planta.png";
 
         //CREAMOS LOS OBJETOS PARA LAS IMÁGENES
-        sprites[0] = new Sprite(300, 120, imgArmor);
-        sprites[1] = new Sprite(150, 150, imgArmor);
-        sprites[2] = new Sprite(320, 300, imgPlanta);
-        sprites[3] = new Sprite(300, 380, imgPlanta);
-
+      
+        
+       
+        
     }
 
-    
+
 
     //============================================================================ 
     function inicializa() {
@@ -962,59 +964,92 @@ window.onload = function(){
         canvas.width = canvasAncho;
         canvas.height = canvasAlto;
 
-       
-
-        function gameLoop()
-        {
-           
+        function drawLine(){
+            let rayX = jugador.x;
+            let rayY = jugador.y;
+            let rayHitDistance = 0;
 
             const rayLength = 100;
+            const rayStepSize = 0.1;
 
-            
-            const rayStartX = canvasAncho/2;
+
+            const rayStartX = canvasAncho / 2;
             const rayStartY = canvasAlto;
 
 
-            const rayAngle = (jugador.anguloRotacion - FOV / 2) * (Math.PI / 180);
+            const rayAngle = jugador.anguloRotacion;
 
-            const rayEndX = jugador.x + Math.cos(rayAngle) * rayLength;
-            const rayEndY = jugador.y + Math.sin(rayAngle) * rayLength;
+            const rayEndX = Math.cos(rayAngle) * rayLength;
+            const rayEndY = Math.sin(rayAngle) * rayLength;
 
             ctx.beginPath();
             ctx.moveTo(rayStartX, rayStartY);
-            ctx.lineTo(rayEndX, rayEndY);
+            ctx.lineTo(jugador.x + rayEndX * rayHitDistance, jugador.y + rayEndY * rayHitDistance);
             ctx.strokeStyle = 'red';
             ctx.lineWidth = 1;
             ctx.stroke();
+            const collisionThreshold = 100;
+            for (let i = 0; i < SS.length; i++) {
+                const enemy = SS[i];
+                const enemyDistance = Math.sqrt(
+                    Math.pow(enemy.x - rayX, 2) + Math.pow(enemy.y - rayY, 2)
+                );
 
-            if (imgArmor && intersects(rayEndX, rayEndY, jugador.x, jugador.y, imgArmor.x, imgArmor.y, 32, 56)) {
-               
-                console.log('it collides');
-                if (spacePressed) {
-                    imgArmor = null;
+                // Check if the distance is within the collisionThreshold
+                if (enemyDistance <= collisionThreshold) {
+                    console.log("It collides with the SS!");
+                    if (spacePressed == true) {
+                        SS[i] = null;
+                    }
+                    // Perform any actions for SS collision here
                 }
             }
 
+        }
+
+        function drawPlanta()
+        {
+            for (a = 0; a < sprites.length; a++) {
+                sprites[a].dibuja();
+            }
+
+            sprites[0] = new Sprite(320, 300, imgPlanta);
+        }
+
+        function drawSS()
+        {
+            for (a = 0; a < SS.length; a++) {
+                SS[a].dibuja();
+            }
+            SS[0] = new Sprite(300, 120, ene);
+           
+
+        }
+
+        function gameLoop() {
+
+            
+
+           
+            
+
+          drawSS();
+           
+           
+          drawLine();
+
+            drawPlanta();
+             
             
 
             requestAnimationFrame(gameLoop);
-            }
-
-       
-        function intersects(x1, y1, x2, y2, x3, y3, width, height) {
-            // Check if the ray intersects with the rectangle
-            return (
-                x1 >= x3 &&
-                x1 <= x3 + width &&
-                y1 >= y3 &&
-                y1 <= y3 + height &&
-                ((x2 >= x3 && x2 <= x3 + width) || (x1 >= x3 && x1 <= x3 + width)) &&
-                ((y2 >= y3 && y2 <= y3 + height) || (y1 >= y3 && y1 <= y3 + height))
-            );
         }
 
-      
+
        
+
+
+
 
         escenario = new Level(canvas, ctx, nivel1);
         jugador = new Player(ctx, escenario, 100, 100);
@@ -1024,18 +1059,18 @@ window.onload = function(){
         //CARGAMOS LOS SPRITES DESPUÉS DEL ESCENARIO Y EL JUGADOR
         inicializaSprites();
 
-       
+
 
         //EMPEZAMOS A EJECUTAR EL BUCLE PRINCIPAL
         setInterval(function () { principal(); }, 1000 / FPS);
 
         //AMPLIAMOS EL CANVAS CON CSS
         reescalaCanvas();
-        
-       
+
+
     }
 
-   
+
 
     function borraCanvas() {
         canvas.width = canvas.width;
